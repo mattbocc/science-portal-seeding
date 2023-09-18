@@ -3,10 +3,10 @@ from dotenv import load_dotenv
 import pandas as pd
 from pymongo import MongoClient
 
-# Load environment variables from .env
+# Load .env
 load_dotenv()
 
-# Define MongoDB connection parameters
+# MongoDB connection parameters
 mongo_uri = os.getenv("MONGO_URI")
 db_name = os.getenv("DB_NAME")
 collection_name = os.getenv("COLLECTION_NAME")
@@ -62,15 +62,13 @@ for document in data:
 print(data)
         
 
-# Connect to MongoDB
+# Connect to MongoDB and insert
 client = MongoClient(mongo_uri)
 db = client[db_name]
 collection = db[collection_name]
 
-# Insert data into MongoDB collection
-# collection.insert_many(data)
+collection.insert_many(data)
 
-# # Close MongoDB connection
-# client.close()
+client.close()
 
-# print(f"Data from '{excel_file}' has been successfully added to '{db_name}.{collection_name}' with empty fields.")
+print(f"Data from '{excel_file}' has been successfully added to '{db_name}.{collection_name}' with empty fields.")
