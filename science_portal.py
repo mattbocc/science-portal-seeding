@@ -13,8 +13,7 @@ collection_name = os.getenv("COLLECTION_NAME")
 
 # Define default values for empty fields
 default_values = {
-    
-    "doiLink": "",
+
     "rating": "",
     "citations": "",
     "status": "",
@@ -25,6 +24,7 @@ default_values = {
         "GEO": "",
         "EGA": "",
         "protocols": "",
+        "PDF": "",
         "other": ""       
 	},
 
