@@ -2,10 +2,29 @@ import os
 import json
 from dotenv import load_dotenv
 import pandas as pd
-from pymongo import MongoClient
+import pymongo
+import certifi
+import string
 
 # Load .env
 load_dotenv()
+
+
+def custom_title_case(s):
+    words = s.split()
+    processed_words = []
+    for word in words:
+        if len(word) > 0:
+            if word[0] not in string.punctuation:
+                processed_words.append(word.capitalize())
+            else:
+                if len(word) > 1:
+                    processed_words.append(word[0] + word[1].capitalize())
+                else:
+                    processed_words.append(word)
+        else:
+            processed_words.append(word)
+    return ' '.join(processed_words)
 
 # MongoDB connection parameters
 mongo_uri = os.getenv("MONGO_URI")
@@ -16,8 +35,8 @@ collection_name = os.getenv("COLLECTION_NAME")
 default_values = {
 
     "rating": "",
-    "citations": "",
-    "status": "",
+    "citations": 0,
+    "status": "Published",
     "repoLinks": {
         "codeOcean": "",
 		"github": "",
@@ -85,11 +104,21 @@ filtered_selected_df = df_selected[
        | (df_selected['filteredAffiliations'].str.contains('PMC', na=False)))
 ]
 
-# Convert 'journal' column to lowercase
+# Convert 'journal' column to lowercase and then capitalize the first letter of each word
 filtered_selected_df['journal'] = filtered_selected_df['journal'].str.lower()
+filtered_selected_df['journal'] = filtered_selected_df['journal'].apply(lambda x: custom_title_case(x))
 
-# Create the 'image' field
-filtered_selected_df['image'] = filtered_selected_df['journal'].str.replace(' ', '_') + '.jpg'
+
+# Create the 'image' field (lowercase of journal and joined by underscores)
+lowercase_journal = filtered_selected_df['journal'].str.lower()
+filtered_selected_df['image'] = lowercase_journal.str.replace(' ', '_') + '.jpg'
+
+# Remove all slashes from affiliations
+filtered_selected_df['affiliations'] = filtered_selected_df['affiliations'].str.replace('/', '')
+
+# Remove all slashes from filteredAffiliations
+filtered_selected_df['filteredAffiliations'] = filtered_selected_df['affiliations'].str.replace('/', '')
+
 
 unique_journals = filtered_selected_df['journal'].unique().tolist()
 
@@ -113,11 +142,10 @@ data = filtered_selected_df.to_dict(orient="records")
 for document in data:
     document.update(default_values)
 
-print(len(data))
-        
+print(len(data))        
 
 # Connect to MongoDB and insert
-client = MongoClient(mongo_uri)
+client = pymongo.MongoClient(mongo_uri, tlsCAFile=certifi.where())
 db = client[db_name]
 collection = db[collection_name]
 

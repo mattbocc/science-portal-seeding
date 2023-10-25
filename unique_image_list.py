@@ -11,25 +11,6 @@ mongo_uri = os.getenv("MONGO_URI")
 db_name = os.getenv("DB_NAME")
 collection_name = os.getenv("COLLECTION_NAME")
 
-# Define default values for empty fields
-default_values = {
-
-    "rating": "",
-    "citations": "",
-    "status": "",
-    "repoLinks": {
-        "codeOcean": "",
-		"github": "",
-        "dggap": "",
-        "GEO": "",
-        "EGA": "",
-        "protocols": "",
-        "PDF": "",
-        "other": ""       
-	},
-
-}
-
 # Load data from Excel file into a pandas DataFrame
 excel_file = os.getenv("EXCEL_SHEET")
 df = pd.read_excel(excel_file, sheet_name="2022", header=0)
