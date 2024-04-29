@@ -7,7 +7,6 @@ import random
 import time
 import json
 
-# Load .env
 load_dotenv()
 
 # MongoDB connection parameters

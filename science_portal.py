@@ -6,9 +6,7 @@ import pymongo
 import certifi
 import string
 
-# Load .env
 load_dotenv()
-
 
 def custom_title_case(s):
     words = s.split()

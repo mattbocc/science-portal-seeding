@@ -1,5 +1,6 @@
 # Images
 /journal_images
+/input
 
 # Environment variables
 .env
