@@ -1,5 +1,7 @@
 # Images
 /journal_images
+/input-data
+/output-data
 
 # Environment variables
 .env
@@ -10,6 +12,4 @@ uhn-publication-data-2022.xlsm
 UHN Publications Workbook v2.1.xlsm
 UHN Publications Workbook v2.1.csv
 unique_journals_test.json
-
-# Extras
-.google-cookie
+UHN-PIs.csv
