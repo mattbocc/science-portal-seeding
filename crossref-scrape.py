@@ -47,17 +47,24 @@ def update_dataframe(csv_path, output_path, email):
     # Add initialize new columns and set their default values
     df['citations'] = 0
     df['rating'] = ""
-    df['status'] = "Published"
     df['dateAdded'] = str(datetime.datetime.now())[:10]
 
     # Iterate over each row in the DataFrame
     for index, row in df.iterrows():
         if pd.notna(row['doi']):  # Check if DOI exists
             created_date, journal_title, publisher = fetch_crossref_data(row['doi'], email)
-            if created_date and journal_title and publisher:
+            if created_date and journal_title != '' and publisher:
                 df.at[index, 'date'] = created_date
                 df.at[index, 'journal'] = journal_title
                 df.at[index, 'publisher'] = publisher
+                df.at[index, 'status'] = 'Published'
+            elif created_date and journal_title == '' and publisher:
+                df.at[index, 'date'] = created_date
+                df.at[index, 'journal'] = journal_title
+                df.at[index, 'publisher'] = publisher
+                df.at[index, 'status'] = 'Preprint'
+                print("Preprint!")
+
         time.sleep(0.25)
         print(f"Updated row {index + 1}/{len(df)}")
 

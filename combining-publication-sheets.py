@@ -38,6 +38,7 @@ filtered_selected_df = df_selected[
     & (~df_selected['type'].str.contains('Early Access', case=False, na=False))
     & (~df_selected['type'].str.contains('brief-report', case=False, na=False))
     & (~df_selected['type'].str.contains('Review', case=False, na=False))
+    & (~df_selected['type'].str.contains('Preprint', case=False, na=False))
     & (~df_selected['type'].str.contains('Video-Audio Media', case=False, na=False))
     & 
     (
