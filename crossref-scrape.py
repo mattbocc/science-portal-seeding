@@ -3,6 +3,7 @@ import requests
 import time
 import json
 import datetime
+import html
 
 doi_fails = []
 no_journal_or_publisher = []
@@ -55,13 +56,13 @@ def update_dataframe(csv_path, output_path, email):
             created_date, journal_title, publisher = fetch_crossref_data(row['doi'], email)
             if created_date and journal_title != '' and publisher:
                 df.at[index, 'date'] = created_date
-                df.at[index, 'journal'] = journal_title
-                df.at[index, 'publisher'] = publisher
+                df.at[index, 'journal'] = html.unescape(journal_title)
+                df.at[index, 'publisher'] = html.unescape(publisher)
                 df.at[index, 'status'] = 'Published'
             elif created_date and journal_title == '' and publisher:
                 df.at[index, 'date'] = created_date
-                df.at[index, 'journal'] = journal_title
-                df.at[index, 'publisher'] = publisher
+                df.at[index, 'journal'] = html.unescape(journal_title)
+                df.at[index, 'publisher'] = html.unescape(publisher)
                 df.at[index, 'status'] = 'Preprint'
                 print("Preprint!")
 
@@ -72,18 +73,19 @@ def update_dataframe(csv_path, output_path, email):
     # df['journal'] = df['journal'].str.title()
 
     # Extract all unique journals into a JSON file
-    unique_journals = df['journal'].unique().tolist()
+    unique_journals = df['journal'].fillna('').unique().tolist()
+    unique_journals = [html.unescape(journal) for journal in unique_journals]
     unique_journal_total = len(unique_journals)
     print(f"Total unique journals {unique_journal_total}")
 
-    with open("./output-data/json-logs/unique_journals.json", 'w') as f:
-        json.dump(unique_journals, f)
+    with open("./output-data/json-logs/unique_journals.json", 'w', encoding='utf-8') as f:
+        json.dump(unique_journals, f, ensure_ascii=False, indent=4)
 
-    with open("./output-data/json-logs/doi_fails.json", 'w') as f:
-        json.dump(doi_fails, f)
+    with open("./output-data/json-logs/doi_fails.json", 'w', encoding='utf-8') as f:
+        json.dump(doi_fails, f, ensure_ascii=False, indent=4)
 
-    with open("./output-data/json-logs/no_journal.json", 'w') as f:
-        json.dump(no_journal_or_publisher, f)
+    with open("./output-data/json-logs/no_journal_or_publisher.json", 'w', encoding='utf-8') as f:
+        json.dump(no_journal_or_publisher, f, ensure_ascii=False, indent=4)
 
     # Extract journals, set to lowercase, replace spaces with underscores and add to the image slot
     lowercase_journal = df['journal'].str.lower()
