@@ -12,7 +12,7 @@ load_dotenv()
 # MongoDB connection parameters
 client = pymongo.MongoClient(os.getenv("MONGO_URI"), tlsCAFile=certifi.where())
 db_name = client[os.getenv("DB_NAME")]
-collection = db_name[os.getenv("COLLECTION_NAME")]
+collection = db_name[os.getenv("PUBLICATION_COLLECTION")]
 
 no_scholar_list = []
 
